@@ -1,15 +1,19 @@
+import settings
+from word import Word
+
+
 class Game:
-    def __init__(self, word):
-        self.WORD = word
-        self.GAME_WORD = ['_'] * len(self.WORD)
+    def __init__(self, word, guess_limit):
+        self.guess_limit = guess_limit
+        self.word = Word(word=word)
 
-    def guess(self, letter):
-        # TODO: See if a recursive solution is cleaner:
-        pos = 0
-        while True:
-            i = self.WORD.find(letter, pos)
-            if i == -1:
-                return ''.join(self.GAME_WORD)
-            self.GAME_WORD[i] = letter
-            pos = i + 1
-
+    def _guess(self, letter):
+        """
+        Interfaces with Word class to handle guesses
+        """
+        result = self.word.guess(letter)
+        if self.word.last_guess_correct == True:
+            return result
+        else:
+            self.guess_limit -= 1
+            return settings.FAILED_GUESS_MESSAGE
