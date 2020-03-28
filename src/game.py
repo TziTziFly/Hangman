@@ -38,10 +38,12 @@ class Game:
             if letter in self.previous_guesses:
                 if len(self.previous_guesses) > 1:
                     # Append previous guesses to message if there're more than one:
-                    raise UserFacingException (self.settings.ERROR_PREVIOUSLY_GUESSED.format(letter) +
+                    raise UserFacingException (
+                            self.settings.ERROR_PREVIOUSLY_GUESSED.format(letter) +
                             ' ' +
-                            self.settings.PREVIOUSLY_GUESSED_CLAUSE.format(sorted(self.previous_guesses)))
-                # # Otherise, just raise error without settings.PREVIOUSLY_GUESSED_CLAUSE:
+                            self.settings.PREVIOUSLY_GUESSED_CLAUSE.format(
+                                sorted(self.previous_guesses - set(letter))))
+                # Otherise, just raise error without settings.PREVIOUSLY_GUESSED_CLAUSE:
                 raise UserFacingException(self.settings.ERROR_PREVIOUSLY_GUESSED.format(letter))
             return letter
 
@@ -54,8 +56,6 @@ class Game:
             letter = self._validate_input(letter)
         except UserFacingException as e:
             return str(e)
-        self.previous_guesses.add(letter)
-        print(self.previous_guesses)
 
         result = self.word.guess(letter)
         # Game won:
@@ -66,5 +66,6 @@ class Game:
             return result
         # Game lost:
         else:
+            self.previous_guesses.add(letter)
             self.guesses_remaining -= 1
             return self.settings.FAILED_GUESS_MESSAGE.format(self.guesses_remaining)
